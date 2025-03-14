@@ -164,8 +164,15 @@ This will run numerous things. In no particular order, it will run:
 * RVIZ will open in a new window
 * velocity_control.py runs as it's own node, and is the main node of this example
 ### WSl
-For WSL, you must each node manually except for ros2 launch px4_offboard visualise.launch.py since gnome terminal doesnt work
-
+For WSL, you must run each node manually since gnome terminal doesnt work
+```
+ ros2 launch px4_offboard visualise.launch.py
+ ```
+except for visualisation.
+To run control node the comand is:
+```
+ros2 run px4_offboard control
+```
 Once everything is running, you should be able to focus into the control.py terminal window, arm, and takeoff. The controls mimic Mode 2 RC Transmitter controls with WASD being the left joystick and the arrow keys being the right joystick. The controls are as follows:
 * W: Up
 * S: Down
