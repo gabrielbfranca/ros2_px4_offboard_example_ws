@@ -191,7 +191,11 @@ Using the controls, click *W* to send a vertical veloctiy command and take off. 
 ## Closing Simulation *IMPORTANT*
 When closing the simulation, it is very tempting to just close the terminal windows. However, this will leave Gazebo running in the background, potentially causing issues when you run Gazebo in the future. To correctly end the Gazebo simulation, go to it's terminal window and click *Ctrl+C*. This will close Gazebo and all of it's child processes. Then, you can close the other terminal windows.
  
-
+## possible solution to errors
+px4_msg building errors were solved by installing earlier version of stuptools
+```
+pip install --user setuptools==56.0.0
+```
  ## Explanation of processes.py
  This code runs each set of bash commands in a new tab of a gnome terminal window. It assumes that your PX4 installation is accessible from your root directory, and it is using the gz_x500 simulation. There is no current implementation to change these commands when running the launch file, however you can modify the command string within processes.py to change these values to what you need.
 
