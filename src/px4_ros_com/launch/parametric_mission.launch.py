@@ -17,9 +17,7 @@ def generate_launch_description():
                 {'max_yaw_angle': 45.0},
                 {'climb_rate': 1.5},
                 {'descent_rate': 1.5},
-                {'pid_p': 0.2},
-                {'pid_i': 0.05},
-                {'pid_d': 0.1}
+
             ]
         )
     ])
