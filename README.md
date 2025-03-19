@@ -68,7 +68,7 @@ These parameters are defined in `parametric_mission.launch.py`:
 - `max_yaw_angle`: Maximum yaw rotation in degrees
 - `climb_rate`: Rate of ascent
 - `descent_rate`: Rate of descent
-- `pid_p`, `pid_i`, `pid_d`: PID controller parameters
+
 
 ### **Running the Node**
 
