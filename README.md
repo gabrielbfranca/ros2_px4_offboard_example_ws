@@ -54,15 +54,21 @@ This ROS 2 node allows configuring autonomous missions using **ROS parameters**.
 - **Takeoff** to a specified altitude.
 - Navigate to a **user-defined destination**.
 - **Land** after reaching the destination.
-- Configurable parameters via **launch file**, **YAML config**, or **CLI**.
+- Configurable parameters via **launch file**
 
 ### **Parameters**
 
-| Parameter     | Description                 | Default Value |
-| ------------- | --------------------------- | ------------- |
-| `altitude`    | Target altitude for flight  | `-5.0` m      |
-| `velocity`    | Drone velocity (m/s)        | `2.0` m/s     |
-| `destination` | Target coordinates `[X, Y]` | `[10, 10]`    |
+These parameters are defined in `parametric_mission.launch.py`:
+
+- `altitude`: Target flight altitude
+- `velocity`: Horizontal flight speed
+- `destination`: [X, Y] target coordinates
+- `position_tolerance`: Distance threshold for reaching the destination
+- `max_acceleration`: Maximum acceleration allowed
+- `max_yaw_angle`: Maximum yaw rotation in degrees
+- `climb_rate`: Rate of ascent
+- `descent_rate`: Rate of descent
+- `pid_p`, `pid_i`, `pid_d`: PID controller parameters
 
 ### **Running the Node**
 
