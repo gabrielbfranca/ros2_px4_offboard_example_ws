@@ -123,10 +123,7 @@ Telemetry can also be checkd with:
 ```bash
 ros2 launch px4_ros_com sensor_combined_listener.launch.py
 ```
-and
-```bash
-ros2 launch px4_ros_com vehicle_gps_position_listener
-```
+
 ---
 
 ## 📜 5. Summary of ROS 2 Topics Used
