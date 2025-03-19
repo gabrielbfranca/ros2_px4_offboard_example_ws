@@ -64,8 +64,8 @@ These parameters are defined in `parametric_mission.launch.py`:
 - `velocity`: Horizontal flight speed
 - `destination`: [X, Y] target coordinates
 - `position_tolerance`: Distance threshold for reaching the destination
-- `max_acceleration`: Maximum acceleration allowed
-- `yaw_angle`: Maximum yaw rotation in degrees
+- `acceleration`
+- `yaw_angle`: yaw rotation in degrees
 - `climb_rate`: Rate of ascent
 - `descent_rate`: Rate of descent
 
