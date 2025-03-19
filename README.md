@@ -102,7 +102,6 @@ This node enables manual control of the drone via keyboard commands.
 | `E`     | Decrease altitude |
 | `T`     | Takeoff           |
 | `G`     | Land              |
-| `Space` | Emergency stop    |
 
 ### **Running the Node**
 
