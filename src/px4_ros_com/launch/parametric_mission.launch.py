@@ -12,7 +12,7 @@ def generate_launch_description():
                 {'altitude': -10.0},
                 {'velocity': 3.0},
                 {'destination': [20.0, 15.0]},
-                {'position_tolerance': 5.0},
+                {'position_tolerance': 7.0},
                 {'max_acceleration': 2.5},
                 {'max_yaw_angle': 45.0},
                 {'climb_rate': 1.5},
