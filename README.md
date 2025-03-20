@@ -49,12 +49,13 @@ If something is stopping you from getting out of pre flight mode, attempt to set
 
 This ROS 2 node allows configuring autonomous missions using **ROS parameters**.
 
-### **Functionality**
-
-- **Takeoff** to a specified altitude.
-- Navigate to a **user-defined destination**.
-- **Land** after reaching the destination.
-- Configurable parameters via **launch file**
+### **How It Works**
+- The drone starts in an **initial state** and transitions through:
+  - `offboard_requested` → Requests Offboard mode.
+  - `armed` → Arms the drone.
+  - `navigating` → Moves towards the destination.
+  - `landing` → Lands when reaching the target.
+- Uses PX4 Offboard mode for precise position control.
 
 ### **Parameters**
 
@@ -69,6 +70,13 @@ These parameters are defined in `parametric_mission.launch.py`:
 - `climb_rate`: Rate of ascent
 - `descent_rate`: Rate of descent
 
+### **ROS 2 Topics Used**
+| **Topic**                              | **Message Type**             | **Direction** | **Purpose** |
+|----------------------------------------|-----------------------------|--------------|-------------|
+| `/fmu/in/offboard_control_mode`       | `OffboardControlMode`       | **Publish**  | Enables Offboard mode. |
+| `/fmu/in/trajectory_setpoint`         | `TrajectorySetpoint`        | **Publish**  | Sends position and velocity setpoints. |
+| `/fmu/in/vehicle_command`             | `VehicleCommand`            | **Publish**  | Sends commands (arm, mode change, land). |
+| `/fmu/out/vehicle_odometry`           | `VehicleOdometry`           | **Subscribe** | Receives drone position updates. |
 
 ### **Running the Node**
 
@@ -97,6 +105,13 @@ This node enables manual control of the drone via keyboard commands.
 | `T`     | Takeoff           |
 | `G`     | Land              |
 
+### **ROS 2 Topics Used**
+| **Topic**                          | **Message Type**             | **Direction** | **Purpose** |
+|------------------------------------|-----------------------------|--------------|-------------|
+| `/fmu/in/trajectory_setpoint`     | `TrajectorySetpoint`        | **Publish**  | Sends position setpoints based on key inputs. |
+| `/fmu/in/vehicle_command`         | `VehicleCommand`            | **Publish**  | Sends commands (arm, set mode, takeoff, land). |
+| `/fmu/out/vehicle_status`         | `VehicleStatus`             | **Subscribe** | Monitors Offboard mode and arming state. |
+
 ### **Running the Node**
 
 ```bash
@@ -109,7 +124,7 @@ ros2 run px4_ros_com keyboard_drone_control.py
 To monitor the drone's position (X, Y, Z) in real-time:
 
 ```bash
-ros2 topic echo /fmu/out/vehicle_local_position
+ros2 topic echo /fmu/out/vehicle_odometry	
 ```
 This continuously displays position updates in the terminal.
 Telemetry can also be checkd with:
