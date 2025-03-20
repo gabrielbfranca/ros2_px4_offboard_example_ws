@@ -2,9 +2,10 @@
 
 import rclpy
 from rclpy.node import Node
-from px4_msgs.msg import OffboardControlMode, TrajectorySetpoint, VehicleCommand
+from px4_msgs.msg import OffboardControlMode, TrajectorySetpoint, VehicleCommand, VehicleOdometry
 import time
 import math
+from rclpy.qos import QoSProfile, QoSReliabilityPolicy
 
 class ParametricMission(Node):
     def __init__(self):
@@ -18,15 +19,17 @@ class ParametricMission(Node):
                 ('altitude', -5.0),
                 ('velocity', 2.0),
                 ('destination', [10.0, 10.0]),
-                ('position_tolerance', 0.5),
+                ('position_tolerance', 2.0),
                 ('max_acceleration', 3.0),
                 ('max_yaw_angle', 30.0),  # Max yaw angle in degrees
                 ('climb_rate', 1.0),  # Rate of ascent (m/s)
                 ('descent_rate', 1.0),  # Rate of descent (m/s)
-                ('pid_p', 0.1),
-                ('pid_i', 0.01),
-                ('pid_d', 0.05)
             ]
+        )
+        
+        qos_profile = QoSProfile(
+            reliability=QoSReliabilityPolicy.BEST_EFFORT,  
+            depth=10
         )
 
         # Publicadores
@@ -37,7 +40,13 @@ class ParametricMission(Node):
 
         self.timer = self.create_timer(0.1, self.timer_callback)
         self.state = "init"
-        self.current_position = [0.0, 0.0, 0.0]  # Placeholder for current position
+        self.odom_subscriber = self.create_subscription(
+            VehicleOdometry,
+            "/fmu/out/vehicle_odometry",
+            self.odom_callback,
+            qos_profile
+        )
+        self.current_position = [0.0, 0.0, 0.0]
 
     def arm(self):
         self.send_vehicle_command(VehicleCommand.VEHICLE_CMD_COMPONENT_ARM_DISARM, 1.0)
@@ -75,21 +84,32 @@ class ParametricMission(Node):
         msg.body_rate = False
         msg.timestamp = int(time.time() * 1e6)
         self.offboard_control_mode_publisher.publish(msg)
-
+    
     def publish_trajectory_setpoint(self):
         destination = self.get_parameter('destination').get_parameter_value().double_array_value
         altitude = self.get_parameter('altitude').get_parameter_value().double_value
         velocity = self.get_parameter('velocity').get_parameter_value().double_value
         max_accel = self.get_parameter('max_acceleration').get_parameter_value().double_value
         max_yaw_angle = self.get_parameter('max_yaw_angle').get_parameter_value().double_value
+        climb_rate = self.get_parameter('climb_rate').get_parameter_value().double_value
+        descent_rate = self.get_parameter('descent_rate').get_parameter_value().double_value
+
+        
+        altitude_change = climb_rate if altitude > self.current_position[2] else -descent_rate
 
         msg = TrajectorySetpoint()
         msg.position = [destination[0], destination[1], altitude]
-        msg.velocity = [velocity, velocity, 0.0]  # Use configured velocity
-        msg.acceleration = [max_accel, max_accel, 0.0]  # Use configured acceleration
-        msg.yaw = math.radians(max_yaw_angle)  # Convert angle to radians
+        msg.velocity = [velocity, velocity, altitude_change]  
+        msg.acceleration = [max_accel, max_accel, 0.0]  
+        msg.yaw = math.radians(max_yaw_angle)  
+
         msg.timestamp = int(time.time() * 1e6)
         self.trajectory_setpoint_publisher.publish(msg)
+
+        
+    def odom_callback(self, msg):
+        self.current_position = [msg.position[0], msg.position[1], msg.position[2]]
+        self.get_logger().info(f"Updated Position: {self.current_position}")
 
     def has_reached_destination(self):
         """Check if the drone is within the tolerance of the destination."""
@@ -100,7 +120,7 @@ class ParametricMission(Node):
             (self.current_position[0] - destination[0]) ** 2 +
             (self.current_position[1] - destination[1]) ** 2
         )
-
+        self.get_logger().info(f"Position tolerance: {position_tolerance}, distance={distance}, destination={destination}")
         return distance <= position_tolerance
 
     def timer_callback(self):
