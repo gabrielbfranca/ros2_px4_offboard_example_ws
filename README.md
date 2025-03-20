@@ -78,12 +78,6 @@ You can launch it via a launch file:
 ros2 launch px4_ros_com parametric_mission.launch.py
 ```
 
-Or via CLI by setting parameters:
-
-```bash
-ros2 run px4_ros_com parametric_mission.py --ros-args -p altitude:=-10.0 -p velocity:=3.0 -p destination:="[20.0, 15.0]"
-```
-
 ---
 
 ## ⌨️ 3. Keyboard Control Node
